@@ -1,0 +1,31 @@
+{
+  "name": "smart_invoice_parser-ai-powered",
+  "version": "1.0.0",
+  "description": "AI-powered web application that automatically extracts and validates key data from invoice documents (PDFs and images).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --watch server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nathnaeltamirat/Smart_Invoice_Parser-AI-Powered.git"
+  },
+  "keywords": [
+    "AI_Parser",
+    "Extractor",
+    "Smart_Invoice_Parser"
+  ],
+  "author": "nathnael tamirat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nathnaeltamirat/Smart_Invoice_Parser-AI-Powered/issues"
+  },
+  "homepage": "https://github.com/nathnaeltamirat/Smart_Invoice_Parser-AI-Powered#readme",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "multer": "^2.0.1",
+    "sequelize": "^6.37.7"
+  }
+}
