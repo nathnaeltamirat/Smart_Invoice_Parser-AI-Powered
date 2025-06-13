@@ -18,17 +18,28 @@ document.addEventListener("DOMContentLoaded", function() {
     const totalAmount = document.getElementById("totalAmount");
     const invoiceDate = document.getElementById("invoiceDate");
     const submitButton = document.getElementById("submitButton");
+    const restore = document.getElementById("restoreButton");
     if (parsedId) {
-        // Fetch the parsed data from your backend
-        fetch(`/api/upload/get?Parsed_Updated_ID=${parsedId}`)
+       fetch(`/api/upload/get?Parsed_Updated_ID=${parsedId}`)
             .then(res => res.json())
             .then(data => {
-                document.getElementById("vendorName").value = data.Vendor || '';
-                document.getElementById("invoiceNumber").value = data.Invoiced_Number || '';
-                document.getElementById("totalAmount").value = data.Total_Amount || '';
-                document.getElementById("invoiceDate").value = data.Invoice_Date || '';
+                vendorName.value = data.Vendor || '';
+                invoiceNumber.value = data.Invoiced_Number || '';
+                totalAmount.value = data.Total_Amount || '';
+                invoiceDate.value = data.Invoice_Date || '';
             });
     }
+    restore.addEventListener("click", function(event) {
+        event.preventDefault();
+        fetch(`/api/upload/restore?Parsed_Updated_ID=${parsedId}`)
+            .then(res => res.json())
+            .then(data => {
+                vendorName.value = data.Vendor || '';
+                invoiceNumber.value = data.Invoiced_Number || '';
+                totalAmount.value = data.Total_Amount || '';
+                invoiceDate.value = data.Invoice_Date || '';
+            });
+    });
     submitButton.addEventListener("click", function(event) {
         event.preventDefault();
         const updatedData = {
@@ -49,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             if (data.success) {
                 alert("Data updated successfully!");
-                window.location.href = '/api/upload/load';
+                window.location.href = '/api/history/';
             } else {
                 alert("Error updating data: " + data.message);
             }

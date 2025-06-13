@@ -44,13 +44,7 @@ const getItem = async (req, res) => {
 }
 
 const updateItem  = async(req, res) => {
-        // const n = parseFloat(numStr.toString().replace(/[^0-9.\-]/g, ''));
-        //     return isNaN(n) ? null : n;
-        // }
-        // function parseDateOrNull(dateStr) {
-        //     const d = new Date(dateStr);
-        //     return isNaN(d.getTime()) ? null : d;
-        // }
+
     const { Vendor, Invoiced_Number, Total_Amount, Invoice_Date, Parsed_Updated_ID } = req.body;
     if (!Parsed_Updated_ID) {
         return res.status(400).json({ message: "Parsed_Updated_ID is required" });
@@ -77,4 +71,59 @@ const updateItem  = async(req, res) => {
     }
 }
 
-module.exports = {editItem,getItem,updateItem}
+const restoreItem  = async(req, res) => {
+    const Parsed_Updated_ID = req.query.Parsed_Updated_ID;
+    if (!Parsed_Updated_ID) {
+        return res.status(400).json({ message: "Parsed_Updated_ID is required" });
+    }
+    const existingData = await ParsedData.findOne({
+        where: { Parsed_Updated_ID }
+    })
+    if (!existingData) {
+        return res.status(404).json({ message: "Parsed data not found" });
+    }   
+    const originalData = await OriginalData.findOne({
+        where: { Parsed_Original_ID: existingData.Parsed_Original_ID }
+    });
+    if (!originalData) {
+        return res.status(404).json({ message: "Original data not found" });
+    }
+    try {
+
+        res.json(originalData);
+    } catch (error) {
+        console.error('Error updating parsed data:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+const deleteItem = async (req,res) =>{
+    const parse_id = req.query.Parsed_Updated_ID;
+    if (!parse_id) {
+        return res.status(400).json({ message: "Parsed_Updated_ID is required" });
+    }
+    try {
+        const parsedData = await ParsedData.findOne({ where: { Parsed_Updated_ID:parse_id} });
+        if (!parsedData) {
+            return res.status(404).json({ success: false, message: "ParsedData not found" });
+        }
+
+        const parsedOriginalId = parsedData.Parsed_Original_ID;
+        const userDataId = parsedData.User_Data_ID;
+        await ParsedData.destroy({
+            where: { Parsed_Updated_ID: parse_id }
+        });
+         await OriginalData.destroy({
+            where: { Parsed_Original_ID: parsedOriginalId }
+        });
+        
+        await UserData.destroy({
+            where: { User_Data_ID: userDataId }
+        });
+        res.json({ success: true, message: "Data deleted successfully" });
+    } catch (error) {
+        console.error('Error deleting parsed data:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+module.exports = {editItem,getItem,updateItem,restoreItem,deleteItem}

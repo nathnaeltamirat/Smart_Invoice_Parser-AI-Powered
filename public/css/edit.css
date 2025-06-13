@@ -84,8 +84,10 @@ a{
 .button_container{
     display:flex;
     flex-direction: row-reverse;
+    gap:10px
 
 }
+
 .button_container button{
     padding:1%;
     background-color:rgb(0, 81, 255);
@@ -93,4 +95,7 @@ a{
     font-weight:bold;
     color:#fff;
     border-radius: 10px;
+}
+.button_container #restoreButton{
+    background-color: rgb(255, 0, 0);
 }
