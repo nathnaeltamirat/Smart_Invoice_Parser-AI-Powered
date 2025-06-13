@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/edit.css">
+    <title>Smart_Invoice_Parser</title>
+</head>
+<body>
+    <div class = "header">
+        <div class = "title">
+            <img src = "/images/logo.png" alt="company_logo_name"/>
+            <h1>Smart Invoice Parser</h1>
+        </div>
+        <div class = "nav">
+            <a>Home</a>
+            <a>History</a>
+            <a href="http://localhost:5000/api/auth/login">Login</a>
+   
+        </div>
+    </div>
+    <hr class = "divider">
+  <div class="block">
+        <h1>Review and edit data</h1>
+        <form class="cont">
+            <h2></h2>
+            <div class="editable">
+                <label for="vendorName">Vendor/Company Name</label>
+                <input type="text" id="vendorName" name="vendorName" value="">
+            </div>
+            <div class="editable">
+                <label for="invoiceNumber">Invoice</label>
+                <input type="text" id="invoiceNumber" name="invoiceNumber" value="">
+            </div>
+            <div class="editable">
+                <label for="totalAmount">Total Amount</label>
+                <input type="text" id="totalAmount" name="totalAmount" value="">
+            </div>
+            <div class="editable">
+                <label for="invoiceDate">Invoice Date</label>
+                <input type="text" id="invoiceDate" name="invoiceDate" value="">
+            </div>
+            <div class="button_container">
+                <button  id = "submitButton">Save Data</button>
+            </div>
+        </form>
+
+
+    </div>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/edit.js"></script>
+</body>
+</html>

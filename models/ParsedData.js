@@ -76,11 +76,11 @@ User.hasMany(ParsedData,{
 
 
 ParsedData.belongsTo(ConfidenceScore,{
-    foreignKey:'ScoreID',
+    foreignKey:'Score_ID',
     as:'ConfidenceScore'
 })
 ConfidenceScore.hasOne(ParsedData,{
-    foreignKey:'Parse_Original_ID',
+    foreignKey:'Score_ID',
     as:'ParseData'
 })
 

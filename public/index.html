@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/index.css">
+    <title>Smart_Invoice_Parser</title>
+</head>
+<body>
+    <div class = "header">
+        <div class = "title">
+            <img src = "/images/logo.png" alt="company_logo_name"/>
+            <h1>Smart Invoice Parser</h1>
+        </div>
+        <div class = "nav">
+            <a>Home</a>
+            <a>History</a>
+            <a href="http://localhost:5000/api/auth/login">Login</a>
+   
+        </div>
+    </div>
+    <hr class = "divider">
+    <div class="block">
+        <h1>Extract Data from Files</h1>
+        <p class = "file_cap">Drag and drop  your files to extract data. Supported format: PDF, JPG, PNG</p>
+
+        <p class = "upload">Upload Files</p>
+        <div class="pdf" id="uploadArea">
+            <h3>Drag or Drop pdf/image here</h3>
+            <p>or click to browse</p>
+            <button id="uploadBtn">Upload PDF/Image</button>
+            <input type="file" id="fileInput" accept=".pdf,image/png,image/jpeg" style="display:none" />
+        </div>
+    </div>
+    <div id="progressContainer" style="display:none;">
+        <progress id="uploadProgress" value="0" max="100" style="width:100%"></progress>
+        <span id="progressText"></span>
+    </div>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/index.js"></script>
+</body>
+</html>

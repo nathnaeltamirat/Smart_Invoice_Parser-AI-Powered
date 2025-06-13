@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/Register.css">
+    <title>Smart_Invoice_Parser</title>
+</head>
+<body>
+    <div class = "header">
+        <div class = "title">
+            <img src = "/images/logo.png" alt="company_logo_name"/>
+            <h1>Smart Invoice Parser</h1>
+        </div>
+        <div class = "nav">
+            <a>Home</a>
+            <a>History</a>
+            <a href="http://localhost:5000/api/auth/register">Signup</a>
+   
+        </div>
+    </div>
+    <hr class = "divider">
+    <div class="block">
+        <div class="left">
+            <img src="/images/signup.png" alt="signup image">
+        </div>
+        <div class="right">
+            <h2>Welcome Back</h2>
+            <form id="loginForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter your username" name="username" required>
+
+                <label for="password">Password:</label>
+                <input type="password"  placeholder="Enter your password" id="password" name="password" required>
+
+
+                <button type="submit">Login</button>
+            </form>
+            <p id="errorMessage" style="color: red;"></p>
+            <p>Doesn't have an account? <a href="http://localhost:5000/api/auth/register">Signup</a></p>
+        </div>
+    </div>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/js/login.js"></script>
+</body>
+</html>

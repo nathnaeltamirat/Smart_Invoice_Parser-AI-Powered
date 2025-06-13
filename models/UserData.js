@@ -17,10 +17,6 @@ const UserData = db.define('UserData',{
         type:DataTypes.STRING,
         allowNull:true
     },
-    format:{
-        type:DataTypes.DATE,
-        allowNull:true
-    },
 }
 )
 
