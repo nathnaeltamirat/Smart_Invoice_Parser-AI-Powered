@@ -1,7 +1,15 @@
 document.addEventListener("DOMContentLoaded", function() {  
     const token = localStorage.getItem('token');
     const historyHolder = document.getElementById('historyHolder');
-
+    const all_export = document.querySelector('#allExport');
+    let allExportFormat = document.createElement('select');
+    allExportFormat.id = 'allExportFormat';
+    allExportFormat.innerHTML = `
+        <option value="json">JSON</option>
+        <option value="pdf">PDF</option>
+    `;
+    all_export.parentNode.insertBefore(allExportFormat, all_export);
+    all_export.style.display = 'none';
     fetch('/api/history/loadHistory', {
         method: 'GET',
         headers: {
@@ -22,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             cont.innerHTML = `
                 <div class="left">
-                    <h2>File Name: ${item.filename || 'Unknown File'}</h2>
+                    <h2 class = "filename">File Name: ${item.filename || 'Unknown File'}</h2>
                     <h3>Summary - Confidence Rate: ${item.confidenceRate || 'error calculating'}</h3>
                     <h2 class = "company">${item.Vendor || 'Unknown Vendor'} </h2>
 
@@ -40,8 +48,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                     <input value="${item.Parsed_Updated_ID}" type="hidden">
                 <div class="export">
+                        <select class="exportFormat">
+                <option value="json">JSON</option>
+                <option value="pdf">PDF</option>
+            </select>
                     <button id = "singleExport">Export</button>
-                    <button id = "originalData">Download Original Data</button>
                 </div>
                 </div>
                 <div class="right">
@@ -58,7 +69,36 @@ document.addEventListener("DOMContentLoaded", function() {
             historyHolder.appendChild(cont);
         const edit = cont.querySelector('.edit');
         const deleteButton = cont.querySelector('.delete')
- 
+        const singleExport = cont.querySelector('#singleExport');
+        const exportFormat = cont.querySelector('.exportFormat');
+        singleExport.addEventListener('click', () => {
+            const parsedId = cont.querySelector('input[type="hidden"]').value;
+            const format = exportFormat.value;
+            fetch(`/api/export/single?Parsed_Updated_ID=${parsedId}&format=${format}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+            })
+            .then(response => {
+            if (!response.ok) throw new Error('Export failed');
+            return response.blob();
+            })
+            .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${item.filename || 'export'}.${format}`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+            alert('Export failed.');
+            console.error(error);
+            });
+        });
         deleteButton.addEventListener('click', (e) => {
             const parentDiv = e.target.closest('.cont');
             const parsedId = parentDiv.querySelector('input[type="hidden"]').value;
@@ -93,12 +133,45 @@ document.addEventListener("DOMContentLoaded", function() {
             const parsedId = parentDiv.querySelector('input[type="hidden"]').value;
                 window.location.href = `/api/upload/update?Parsed_Updated_ID=${parsedId}`;
         });
-
+        container = document.querySelectorAll('.cont');
+        if(container.length){
+            all_export.style.display = 'block';
+           all_export.addEventListener('click', () => {
+            const token = localStorage.getItem('token');
+            const format = document.getElementById('allExportFormat').value;
+            fetch(`/api/export/multiExport?format=${format}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Export failed');
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `all_exports.${format}`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                alert('Export failed.');
+                console.error(error);
+            });
         });
+        }
+        });
+        
     })
     .catch(error => {
         historyHolder.innerHTML = "<p>Error loading history.</p>";
         console.error('Error fetching history:', error);
     });
+
    
 });

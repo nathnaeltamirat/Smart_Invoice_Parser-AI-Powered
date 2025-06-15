@@ -1,6 +1,7 @@
+
 const {DataTypes} = require('sequelize');
 const db = require('../config/db');
-const User = require('./User');
+
 
 const UserData = db.define('UserData',{
     User_Data_ID:{

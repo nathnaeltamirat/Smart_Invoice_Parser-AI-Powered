@@ -44,20 +44,20 @@ const ParsedData = db.define('ParsedData',{
             key:'Parsed_Original_ID'
         }
     },
+    User_Data_ID:{
+        type:DataTypes.INTEGER,
+        allowNull:false,
+        references:{
+            model:UserData,
+            key:'User_Data_ID'
+        }
+    },
     Score_ID:{
         type:DataTypes.INTEGER,
         allowNull:false,
         references:{
            model:ConfidenceScore,
            key:'Score_ID' 
-        }
-    },
-    User_Data_ID:{
-        type:DataTypes.INTEGER,
-        allowNull:false,
-        references:{
-           model:UserData,
-           key:'User_Data_ID' 
         }
     }
 },{
@@ -84,14 +84,6 @@ ConfidenceScore.hasOne(ParsedData,{
     as:'ParseData'
 })
 
-ParsedData.belongsTo(UserData,{
-    foreignKey:'User_Data_ID',
-    as:'UserData'
-})
-UserData.hasOne(ParsedData,{
-    foreignKey:'User_Data_ID',
-    as:'ParseData'
-})
 
 
 
@@ -103,4 +95,14 @@ OriginalData.hasOne(ParsedData,{
     foreignKey:'Parse_Original_ID',
     as:'ParseData'
 })
+
+ParsedData.belongsTo(UserData,{
+    foreignKey:'User_Data_ID',
+    as:'UserData'
+})
+UserData.hasOne(ParsedData,{
+    foreignKey:'User_Data_ID',
+    as:'ParseData'
+})
+
 module.exports = ParsedData;

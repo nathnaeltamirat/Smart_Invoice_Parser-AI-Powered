@@ -1,18 +1,7 @@
-alert("It is working")
-    // res.sendFile(path.join(__dirname, "..", "public", "edit.html"), {
-    //     headers: {
-    //         'Content-Type': 'text/html'
-    //     },
-    //     Parsed_Updated_ID,
-    //     Vendor,
-    //     Invoiced_Number,
-    //     Total_Amount,
-    //     Invoice_Date
-    // });
 document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const parsedId = urlParams.get('Parsed_Updated_ID');
-    const form = document.querySelector(".editForm");
+
     const vendorName = document.getElementById("vendorName");
     const invoiceNumber = document.getElementById("invoiceNumber");
     const totalAmount = document.getElementById("totalAmount");

@@ -3,13 +3,16 @@ const bcrypt = require('bcrypt');
 const path = require("path")
 const jwt = require('jsonwebtoken');
 
+
 const register = async (req, res) =>{
     res.sendFile(path.join(__dirname,"..","public","register.html"));
 
 }
+
 const login = async (req, res) => {
     res.sendFile(path.join(__dirname, "..", "public", "login.html"));
 }
+
 const registerUser = async (req ,res)=>{
     console.log(req.body)
     const {username,password,confirm_password} = req.body;

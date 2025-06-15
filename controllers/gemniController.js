@@ -1,13 +1,13 @@
-const UserData = require('../models/UserData');
 const axios = require('axios');
-const path = require('path');
 const ConfidenceScore = require('../models/ConfidenceScore');
 const OriginalData = require('../models/OriginalData');
 const ParsedData = require('../models/ParsedData');
+const UserData = require('../models/UserData');
+const path = require('path');
 require('dotenv').config();
 const gemniProcess = async (req, res) => { 
 
-    const {filePath, text, confidence, UserID } = req.body;
+    const {filename,originalname,filePath, text, confidence, UserID } = req.body;
     if (!text || !confidence) {
         return res.status(400).json({ message: "Text and confidence are required" });
     }
@@ -74,16 +74,10 @@ const gemniProcess = async (req, res) => {
                 invoice_date: ""
             };
         }
-        console.log("Extracted data:", extracted);
-        console.log(extracted.vendor, extracted.invoice_number, extracted.total_amount, extracted.invoice_date);
         function parseDateOrNull(dateStr) {
             const d = new Date(dateStr);
             return isNaN(d.getTime()) ? null : d;
         }
-      const userData = await UserData.create({
-            link: filePath,
-            name: path.basename(filePath),
-        });
 
         const originalData = await OriginalData.create({
             Vendor: extracted.vendor,
@@ -98,6 +92,11 @@ const gemniProcess = async (req, res) => {
             Total_Amount: confidence,
             Invoice_Date: confidence
         });
+    // originalname comes from req.body.originalname
+    const userData = await UserData.create({
+        link: filePath,
+        name: originalname || path.basename(filePath),
+    });
 
         const parsedData = await ParsedData.create({
             Vendor: extracted.vendor,
@@ -109,11 +108,8 @@ const gemniProcess = async (req, res) => {
             Score_ID: confidenceScore.Score_ID,
             User_Data_ID: userData.User_Data_ID
         });
-        console.log("Database Updated")
-        res.json({ Parsed_Updated_ID: parsedData.Parsed_Updated_ID });
-        console.log("Gemini message:", message);
 
-        console.log("Gemini API response:", response.data);
+        res.json({ Parsed_Updated_ID: parsedData.Parsed_Updated_ID });
         
     } catch (error) {
         console.error('Gemini API error:', error.response?.data || error.message);

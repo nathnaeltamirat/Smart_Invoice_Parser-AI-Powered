@@ -1,10 +1,6 @@
 const path = require("path");
 const User = require('../models/User');
 const fs = require("fs");
-const ConfidenceScore = require('../models/ConfidenceScore');
-const ParsedData = require('../models/ParsedData');
-const OriginalData = require('../models/OriginalData');
-const UserData = require('../models/UserData');
 const jwt = require('jsonwebtoken');
 const Tesseract = require('tesseract.js');
 const pdfPoppler = require('pdf-poppler');
@@ -35,7 +31,6 @@ const uploader = async (req, res) => {
         const filePath = file.path;
         let imagesToProcess = [];
 
-        // If PDF, convert to images
         if (file.mimetype === 'application/pdf') {
             const outputDir = path.join(__dirname, '..', 'uploads', `pdf_${Date.now()}`);
             fs.mkdirSync(outputDir, { recursive: true });
@@ -49,7 +44,6 @@ const uploader = async (req, res) => {
 
             await pdfPoppler.convert(filePath, opts);
 
-            // Collect all generated images
             imagesToProcess = fs.readdirSync(outputDir)
                 .filter(f => f.endsWith('.png'))
                 .map(f => path.join(outputDir, f));
@@ -99,21 +93,17 @@ const uploader = async (req, res) => {
         }
         fs.unlinkSync(filePath);
 
-        // res.status(200).json({
-        //     message: "File uploaded and processed successfully",
-        //     text: allText.trim(),
-        //     confidence: confidences.length ? (confidences.reduce((a, b) => a + b, 0) / confidences.length) : null,
-        //     filePath: file.originalname
-        // });
-       
 
-      const geminiResponse = await fetch('http://localhost:5000/api/upload/gemni', {
+
+    const geminiResponse = await fetch('http://localhost:5000/api/upload/gemni', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
         text: allText.trim(),
         confidence: confidences.length ? (confidences.reduce((a, b) => a + b, 0) / confidences.length) : null,
-        filePath: file.originalname,
+        filePath: file.path,           
+        filename: file.filename,       
+        originalname: file.originalname,
         UserID: decoded.id
     })
 });
@@ -121,7 +111,6 @@ const uploader = async (req, res) => {
         const data = await geminiResponse.json();
         res.json({ Parsed_Updated_ID: data.Parsed_Updated_ID });
     } catch (error) {
-        console.error("Error uploading file:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };

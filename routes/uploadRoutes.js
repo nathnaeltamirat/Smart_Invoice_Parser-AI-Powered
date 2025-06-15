@@ -3,7 +3,7 @@ const express = require('express');
 const {loader,uploader} = require('../controllers/uploadController');
 const gemniProcess = require('../controllers/gemniController')
 const {editItem,getItem,updateItem,restoreItem,deleteItem} = require('../controllers/editController');
-const verifyToken = require('../middlewares/auth');
+const verify = require('../middlewares/auth');
 const router = express.Router();
 const multer = require('multer');
 const upload = multer({
@@ -12,12 +12,12 @@ const upload = multer({
 });
 
 
-router.get('/load', loader);
+router.get('/load',loader);
 router.post('/load',upload.single('file'),uploader);
 router.post('/gemni',gemniProcess);
 router.get('/update', editItem);
 router.get('/get', getItem);
 router.post('/change', updateItem);
 router.get('/restore', restoreItem);
-router.delete('/delete', deleteItem);
+router.delete('/delete', verify,deleteItem);
 module.exports = router;

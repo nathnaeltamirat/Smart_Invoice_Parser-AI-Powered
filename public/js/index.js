@@ -1,7 +1,6 @@
 const token = localStorage.getItem('token');
-console.log('Token:', token);
 if (!token) {
-    window.location.href = 'http://localhost:5000/api/auth/login';
+    window.location.href = '/api/auth/login';
 }
 
 const uploadArea = document.getElementById('uploadArea');
@@ -46,7 +45,7 @@ function handleFileUpload(event){
     const formData = new FormData();
     formData.append('file', file);
 
-    axios.post('http://localhost:5000/api/upload/load/', formData, {
+    axios.post('/api/upload/load/', formData, {
         headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',
@@ -55,29 +54,40 @@ function handleFileUpload(event){
             if (progressEvent.lengthComputable) {
                 const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                 uploadProgress.value = percent;
-                progressText.textContent = percent + '%';
-                if (percent >= 100) {
-                setTimeout(() => {
-                    progressContainer.style.display = 'none';
-                }, 500); // small delay for smoothness
-            }
+                progressText.textContent = `Uploading: ${percent}%`;
             }
         }
-        
-}).then(response => {
-    console.log(response.data)
-  if (response.data.Parsed_Updated_ID) {
-    window.location.href = `/api/upload/update?Parsed_Updated_ID=${response.data.Parsed_Updated_ID}`;
-  } else {
-    alert('File uploaded successfully, but no data was returned.');
-  }
+    }).then(response => {
 
-}).catch(error => {
-    console.error('Error uploading file:', error);
-    if (error.response && error.response.data) {
-        alert(`Error: ${error.response.data.message}`);
-    } else {
-        alert('An error occurred while uploading the file. Please try again.');
-    }
-});
+        uploadProgress.value = 100;
+        progressText.textContent = 'Parsing: 0%';
+        let parsePercent = 0;
+        const parseInterval = setInterval(() => {
+            parsePercent += 10;
+            if (parsePercent >= 100) {
+                parsePercent = 100;
+                progressText.textContent = 'Parsing complete!';
+                clearInterval(parseInterval);
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                    if (response.data.Parsed_Updated_ID) {
+                        window.location.href = `/api/upload/update?Parsed_Updated_ID=${response.data.Parsed_Updated_ID}`;
+                    } else {
+                        alert('File uploaded successfully, but no data was returned.');
+                    }
+                }, 800);
+            } else {
+                progressText.textContent = `Parsing: ${parsePercent}%`;
+                uploadProgress.value = parsePercent;
+            }
+        }, 100); 
+    }).catch(error => {
+        console.error('Error uploading file:', error);
+        if (error.response && error.response.data) {
+            alert(`Error: ${error.response.data.message}`);
+        } else {
+            alert('An error occurred while uploading the file. Please try again.');
+        }
+        progressContainer.style.display = 'none';
+    });
 }

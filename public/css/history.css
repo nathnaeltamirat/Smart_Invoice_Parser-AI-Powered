@@ -68,12 +68,21 @@ hr{
     padding:2%;
     border-radius: 12px;
 }
+.cont *{
+    overflow-x: auto;
+}
 .cont .left {
     color:rgb(53, 53, 53);
 }
 .cont .left .h2{
     font-size:1.1rem;
 
+}
+.filename{
+        font-size:1.1rem;
+    max-width:70%;
+    overflow-x:  hidden;
+       color:#3E8585;
 }
 .cont .left .h3{
     font-size:1.1rem;
@@ -124,6 +133,28 @@ hr{
     padding:2%;
     background-color: rgb(127, 170, 255);
     border-radius: 10px;
+}
+#allExport{
+    position:fixed;
+    top: 11%;
+    right: 10px;
+    padding: 1%;
+    background-color: rgb(127, 170, 255);
+    border-radius: 10px;
+    color:white;
+    font-weight: bold;;
+    cursor: pointer;
+}
+#allExportFormat{
+    position:fixed;
+    top: 11%;
+    right: 115px;
+    padding: 1%;
+    background-color: rgb(127, 170, 255);
+    border-radius: 10px;
+    color:white;
+    font-weight: bold;;
+    cursor: pointer;
 }
 @keyframes test {
     from{

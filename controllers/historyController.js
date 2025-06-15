@@ -1,16 +1,15 @@
 const ParsedData = require("../models/ParsedData");
 const path = require('path');
 const jwt = require('jsonwebtoken');
-const { where } = require("sequelize");
 const ConfidenceScore = require('../models/ConfidenceScore');
-const UserData = require('../models/UserData');
+const UserData = require("../models/UserData");
 const serveHistory = async (req, res) => {
     res.sendFile(path.join(__dirname, "..", "public", "history.html"));
 }
 
 const loadHistory = async (req, res) => {
 
-        const token = req.headers.authorization?.split(" ")[1];
+     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
     }
@@ -29,8 +28,8 @@ const loadHistory = async (req, res) => {
             'Total_Amount',
             'User_ID',
             'Parsed_Original_ID',
-            'Score_ID',
             'User_Data_ID',
+            'Score_ID',
             'createdAt',
             'updatedAt'
         ]
@@ -42,7 +41,7 @@ const loadHistory = async (req, res) => {
             return res.status(404).json({ message: "No history found for this user" });
         }
 
-
+        // Fetch user data for each history item
         const results = await Promise.all(history.map(async (item) => {
             const confidence = await ConfidenceScore.findByPk(item.Score_ID);
             const confidenceRate = confidence ? confidence.Vendor : null;

@@ -1,7 +1,5 @@
-const UserData = require('../models/UserData');
-const axios = require('axios');
-const path = require('path');
-const ConfidenceScore = require('../models/ConfidenceScore');
+
+const path = require('path');;
 const OriginalData = require('../models/OriginalData');
 const ParsedData = require('../models/ParsedData');
 
@@ -92,7 +90,6 @@ const restoreItem  = async(req, res) => {
 
         res.json(originalData);
     } catch (error) {
-        console.error('Error updating parsed data:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
@@ -108,7 +105,7 @@ const deleteItem = async (req,res) =>{
         }
 
         const parsedOriginalId = parsedData.Parsed_Original_ID;
-        const userDataId = parsedData.User_Data_ID;
+
         await ParsedData.destroy({
             where: { Parsed_Updated_ID: parse_id }
         });
@@ -116,12 +113,8 @@ const deleteItem = async (req,res) =>{
             where: { Parsed_Original_ID: parsedOriginalId }
         });
         
-        await UserData.destroy({
-            where: { User_Data_ID: userDataId }
-        });
         res.json({ success: true, message: "Data deleted successfully" });
     } catch (error) {
-        console.error('Error deleting parsed data:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }
