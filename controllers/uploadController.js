@@ -3,14 +3,14 @@ const User = require('../models/User');
 const fs = require("fs");
 const jwt = require('jsonwebtoken');
 const Tesseract = require('tesseract.js');
-const fetch = require('node-fetch');
 const { createCanvas } = require('canvas');
 const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
-
+  const gemniExtract  = require('./gemniController');
 
 const loader = async (req, res) => {
     res.sendFile(path.join(__dirname, "..", "public", "index.html"));
-}
+};
+
 const uploader = async (req, res) => {
     const uploadsDir = path.join(__dirname, 'uploads');
     if (!fs.existsSync(uploadsDir)) {
@@ -36,26 +36,25 @@ const uploader = async (req, res) => {
         const filePath = file.path;
         let imagesToProcess = [];
 
-if (file.mimetype === 'application/pdf') {
-
-    const data = new Uint8Array(fs.readFileSync(filePath));
-    const pdf = await pdfjsLib.getDocument({ data }).promise;
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const viewport = page.getViewport({ scale: 2.0 });
-        const canvas = createCanvas(viewport.width, viewport.height);
-        const context = canvas.getContext('2d');
-        await page.render({ canvasContext: context, viewport }).promise;
-        const imgPath = path.join(__dirname, '..', 'uploads', `page_${pageNum}_${Date.now()}.png`);
-        const out = fs.createWriteStream(imgPath);
-        const stream = canvas.createPNGStream();
-        stream.pipe(out);
-        await new Promise(resolve => out.on('finish', resolve));
-        imagesToProcess.push(imgPath);
-    }
-    } else {
-        imagesToProcess = [filePath];
-    }
+        if (file.mimetype === 'application/pdf') {
+            const data = new Uint8Array(fs.readFileSync(filePath));
+            const pdf = await pdfjsLib.getDocument({ data }).promise;
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                const page = await pdf.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 2.0 });
+                const canvas = createCanvas(viewport.width, viewport.height);
+                const context = canvas.getContext('2d');
+                await page.render({ canvasContext: context, viewport }).promise;
+                const imgPath = path.join(__dirname, '..', 'uploads', `page_${pageNum}_${Date.now()}.png`);
+                const out = fs.createWriteStream(imgPath);
+                const stream = canvas.createPNGStream();
+                stream.pipe(out);
+                await new Promise(resolve => out.on('finish', resolve));
+                imagesToProcess.push(imgPath);
+            }
+        } else {
+            imagesToProcess = [filePath];
+        }
 
         let allWords = [];
         let allText = '';
@@ -94,36 +93,38 @@ if (file.mimetype === 'application/pdf') {
             }
         }
 
-        if (file.mimetype === 'application/pdf') {
-            fs.rmSync(path.dirname(imagesToProcess[0]), { recursive: true, force: true });
+        if (file.mimetype === 'application/pdf' && imagesToProcess.length > 0) {
+            // Remove generated images
+            for (const imgPath of imagesToProcess) {
+                if (fs.existsSync(imgPath)) {
+                    fs.unlinkSync(imgPath);
+                }
+            }
         }
-        fs.unlinkSync(filePath);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
 
-
-
-    const geminiResponse = await fetch('/api/upload/gemni', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+     
+try {
+    const reqBody = {
         text: allText.trim(),
         confidence: confidences.length ? (confidences.reduce((a, b) => a + b, 0) / confidences.length) : null,
-        filePath: file.path,           
-        filename: file.filename,       
+        filePath: file.path,
+        filename: file.filename,
         originalname: file.originalname,
         UserID: decoded.id
-    })
-});
-
-        const data = await geminiResponse.json();
-        res.json({ Parsed_Updated_ID: data.Parsed_Updated_ID });
-    } catch (error) {
+    };
+    const data = await gemniExtract(reqBody);
+    res.json({ Parsed_Updated_ID: data.Parsed_Updated_ID });
+} catch (error) {
     console.error("Upload error:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
 }
+    } catch (error) {
+        console.error("Upload error:", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
 };
 
-
-
-
-module.exports = {loader,uploader};
-
+module.exports = { loader, uploader };

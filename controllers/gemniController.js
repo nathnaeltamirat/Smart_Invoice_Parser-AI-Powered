@@ -5,23 +5,21 @@ const ParsedData = require('../models/ParsedData');
 const UserData = require('../models/UserData');
 const path = require('path');
 require('dotenv').config();
-const gemniProcess = async (req, res) => { 
 
-    const {filename,originalname,filePath, text, confidence, UserID } = req.body;
+async function gemniExtract({ filename, originalname, filePath, text, confidence, UserID }) {
     if (!text || !confidence) {
-        return res.status(400).json({ message: "Text and confidence are required" });
+        throw new Error("Text and confidence are required");
     }
 
     try {
         console.log("Sending to Gemini:", text, confidence);
-        // ...API call...
 
         const response = await axios.post(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
             {
                 contents: [
                     {
-                       parts: [
+                        parts: [
                             {
                                 text: `
                             Given the following OCR-extracted invoice text (with an overall OCR confidence of ${confidence}), extract the following fields if possible:
@@ -54,10 +52,16 @@ const gemniProcess = async (req, res) => {
                 headers: { 'Content-Type': 'application/json' }
             }
         );
-      function parseNumberOrNull(numStr) {
-        const n = parseFloat(numStr.toString().replace(/[^0-9.\-]/g, ''));
-    return isNaN(n) ? null : n;
-}
+
+        function parseNumberOrNull(numStr) {
+            const n = parseFloat(numStr?.toString().replace(/[^0-9.\-]/g, ''));
+            return isNaN(n) ? null : n;
+        }
+        function parseDateOrNull(dateStr) {
+            const d = new Date(dateStr);
+            return isNaN(d.getTime()) ? null : d;
+        }
+
         console.log("Gemini raw response:", response.data);
         const message = response.data.candidates?.[0]?.content?.parts?.[0]?.text || null;
         let cleanMessage = message ? message.trim() : "";
@@ -78,10 +82,6 @@ const gemniProcess = async (req, res) => {
                 invoice_date: ""
             };
         }
-        function parseDateOrNull(dateStr) {
-            const d = new Date(dateStr);
-            return isNaN(d.getTime()) ? null : d;
-        }
 
         const originalData = await OriginalData.create({
             Vendor: extracted.vendor,
@@ -96,11 +96,11 @@ const gemniProcess = async (req, res) => {
             Total_Amount: confidence,
             Invoice_Date: confidence
         });
-    // originalname comes from req.body.originalname
-    const userData = await UserData.create({
-        link: filePath,
-        name: originalname || path.basename(filePath),
-    });
+
+        const userData = await UserData.create({
+            link: filePath,
+            name: originalname || path.basename(filePath),
+        });
 
         const parsedData = await ParsedData.create({
             Vendor: extracted.vendor,
@@ -108,17 +108,16 @@ const gemniProcess = async (req, res) => {
             Total_Amount: parseNumberOrNull(extracted.total_amount),
             Invoice_Date: parseDateOrNull(extracted.invoice_date),
             User_ID: UserID,
-            Parsed_Original_ID: originalData.Parsed_Original_ID, 
+            Parsed_Original_ID: originalData.Parsed_Original_ID,
             Score_ID: confidenceScore.Score_ID,
             User_Data_ID: userData.User_Data_ID
         });
 
-        res.json({ Parsed_Updated_ID: parsedData.Parsed_Updated_ID });
-        
+        return { Parsed_Updated_ID: parsedData.Parsed_Updated_ID };
     } catch (error) {
         console.error('Gemini API error:', error.response?.data || error.message);
-        res.status(500).json({ message: 'Error calling Gemini API', error: error.response?.data || error.message });
+        throw error;
     }
-};
+}
 
-module.exports = gemniProcess ;
+module.exports =  gemniExtract ;
