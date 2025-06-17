@@ -101,7 +101,7 @@ if (file.mimetype === 'application/pdf') {
 
 
 
-    const geminiResponse = await fetch('http://localhost:5000/api/upload/gemni', {
+    const geminiResponse = await fetch('/api/upload/gemni', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
