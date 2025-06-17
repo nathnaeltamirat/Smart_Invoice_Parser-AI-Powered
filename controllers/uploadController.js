@@ -19,7 +19,7 @@ const uploader = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: "No file uploaded or file too large." });
     }
-
+    console.log("Uploader called, file:", req.file);
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -117,8 +117,9 @@ if (file.mimetype === 'application/pdf') {
         const data = await geminiResponse.json();
         res.json({ Parsed_Updated_ID: data.Parsed_Updated_ID });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error" });
-    }
+    console.error("Upload error:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+}
 };
 
 
