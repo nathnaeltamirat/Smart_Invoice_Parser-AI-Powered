@@ -13,6 +13,9 @@ const gemniProcess = async (req, res) => {
     }
 
     try {
+        console.log("Sending to Gemini:", text, confidence);
+        // ...API call...
+
         const response = await axios.post(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
             {
@@ -55,6 +58,7 @@ const gemniProcess = async (req, res) => {
         const n = parseFloat(numStr.toString().replace(/[^0-9.\-]/g, ''));
     return isNaN(n) ? null : n;
 }
+        console.log("Gemini raw response:", response.data);
         const message = response.data.candidates?.[0]?.content?.parts?.[0]?.text || null;
         let cleanMessage = message ? message.trim() : "";
         if (cleanMessage.startsWith("```json")) {
