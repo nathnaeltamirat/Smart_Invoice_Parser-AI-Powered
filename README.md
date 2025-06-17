@@ -5,7 +5,7 @@ Users can upload PDF or image invoices, extract structured data, view/edit histo
 
 ---
 
-## 🚀 Features
+## Features
 
 - **User Authentication:** Register and login with JWT-based authentication.
 - **Invoice Upload:** Upload PDF, JPEG, or PNG invoices.
@@ -18,7 +18,7 @@ Users can upload PDF or image invoices, extract structured data, view/edit histo
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 - **Frontend:** HTML, CSS, JavaScript (Vanilla)
 - **Backend:** Node.js, Express.js
@@ -31,14 +31,14 @@ Users can upload PDF or image invoices, extract structured data, view/edit histo
 
 ---
 
-## 🧠 Generative AI
+##  Generative AI
 
 - **Model:** Google Gemini (GPT) via Google Generative Language API
 - **Usage:** Extracts structured fields (vendor, invoice number, total, date) from OCR text.
 
 ---
 
-## 📦 Installation & Deployment
+##  Installation & Deployment
 
 ### 1. **Clone the repository**
 ```sh
@@ -80,7 +80,7 @@ Visit [http://localhost:5000](http://localhost:5000)
 
 ---
 
-## ☁️ Deploying on Render
+##  Deploying on Render
 
 1. **Push your code to GitHub.**
 2. **Create a new Web Service on [Render](https://render.com/):**
@@ -97,7 +97,7 @@ Visit [http://localhost:5000](http://localhost:5000)
 
 ---
 
-## 📝 Usage
+##  Usage
 
 - Register or login.
 - Upload an invoice (PDF, JPEG, PNG).
@@ -107,7 +107,7 @@ Visit [http://localhost:5000](http://localhost:5000)
 
 ---
 
-## 🐞 Troubleshooting
+## Troubleshooting
 
 - **PDF not processing on Linux/Render:**  
   Make sure you use `pdfjs-dist` and `canvas` for PDF-to-image conversion, not `pdf-poppler`.
@@ -118,13 +118,9 @@ Visit [http://localhost:5000](http://localhost:5000)
 
 ---
 
-## 📄 License
 
-MIT
 
----
-
-## 🤖 Credits
+##  Credits
 
 - [Tesseract.js](https://github.com/naptha/tesseract.js)
 - [pdfjs-dist](https://github.com/mozilla/pdfjs-dist)
