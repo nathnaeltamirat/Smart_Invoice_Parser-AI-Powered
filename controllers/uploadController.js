@@ -12,6 +12,10 @@ const loader = async (req, res) => {
     res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 }
 const uploader = async (req, res) => {
+    const uploadsDir = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir);
+    }
     if (!req.file) {
         return res.status(400).json({ message: "No file uploaded or file too large." });
     }
