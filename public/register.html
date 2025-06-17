@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/Register.css">
+    <title>Smart_Invoice_Parser</title>
+</head>
+<body>
+    <div class = "header">
+        <div class = "title">
+            <img src = "/images/logo.png" alt="company_logo_name"/>
+            <h1>Smart Invoice Parser</h1>
+        </div>
+        <div class = "nav">
+            <a href = "/api/upload/load">Home</a>
+            <a href = "/api/history">History</a>
+            <a href="/api/auth/login">Logout</a>
+        </div>
+    </div>
+    <hr class = "divider">
+    <div class="block">
+        <div class="left">
+            <img src="/images/signup.png" alt="signup image">
+        </div>
+        <div class="right">
+            <h2>Create your account</h2>
+            <form id = "registerForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter your username" name="username" required>
+
+                <label for="password">Password:</label>
+                <input type="password"  placeholder="Enter your password" id="password" name="password" required>
+
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="password" placeholder="Confirm your password" id="confirm_password" name="confirm_password" required>
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="/api/auth/login">Login</a></p>
+            <p id="errorMessage" style="color: red;"></p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/js/register.js"></script>
+
+</body>
+</html>
