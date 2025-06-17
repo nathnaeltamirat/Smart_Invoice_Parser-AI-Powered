@@ -3,8 +3,9 @@ const User = require('../models/User');
 const fs = require("fs");
 const jwt = require('jsonwebtoken');
 const Tesseract = require('tesseract.js');
-const pdfPoppler = require('pdf-poppler');
 const fetch = require('node-fetch');
+const { createCanvas } = require('canvas');
+const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
 
 
 const loader = async (req, res) => {
@@ -31,25 +32,26 @@ const uploader = async (req, res) => {
         const filePath = file.path;
         let imagesToProcess = [];
 
-        if (file.mimetype === 'application/pdf') {
-            const outputDir = path.join(__dirname, '..', 'uploads', `pdf_${Date.now()}`);
-            fs.mkdirSync(outputDir, { recursive: true });
+if (file.mimetype === 'application/pdf') {
 
-            const opts = {
-                format: 'png',
-                out_dir: outputDir,
-                out_prefix: path.parse(file.filename).name,
-                page: null
-            };
-
-            await pdfPoppler.convert(filePath, opts);
-
-            imagesToProcess = fs.readdirSync(outputDir)
-                .filter(f => f.endsWith('.png'))
-                .map(f => path.join(outputDir, f));
-        } else {
-            imagesToProcess = [filePath];
-        }
+    const data = new Uint8Array(fs.readFileSync(filePath));
+    const pdf = await pdfjsLib.getDocument({ data }).promise;
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 2.0 });
+        const canvas = createCanvas(viewport.width, viewport.height);
+        const context = canvas.getContext('2d');
+        await page.render({ canvasContext: context, viewport }).promise;
+        const imgPath = path.join(__dirname, '..', 'uploads', `page_${pageNum}_${Date.now()}.png`);
+        const out = fs.createWriteStream(imgPath);
+        const stream = canvas.createPNGStream();
+        stream.pipe(out);
+        await new Promise(resolve => out.on('finish', resolve));
+        imagesToProcess.push(imgPath);
+    }
+    } else {
+        imagesToProcess = [filePath];
+    }
 
         let allWords = [];
         let allText = '';
@@ -119,3 +121,4 @@ const uploader = async (req, res) => {
 
 
 module.exports = {loader,uploader};
+
