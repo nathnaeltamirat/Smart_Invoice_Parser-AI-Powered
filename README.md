@@ -66,7 +66,7 @@ GEMINI_API_KEY=your_google_gemini_api_key
 ### 4. **Database Setup**
 
 - The app uses Sequelize. On first run, tables will be created automatically.
-- For production, use Sequelize migrations.
+
 
 ### 5. **Run Locally**
 
@@ -93,9 +93,7 @@ Visit [http://localhost:5000](http://localhost:5000)
 3. **Create a PostgreSQL database on Render and update your `.env` accordingly.**
 4. **Deploy!**
 
-**Note:**  
-- Render's filesystem is ephemeral. For persistent uploads, use cloud storage (e.g., AWS S3).
-- All static files (HTML, CSS, JS) must be in the `public` folder and use lowercase filenames (e.g., `register.html`).
+
 
 ---
 
